@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Attendence</title>
+</head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+  }
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+</style>
+<body>
+    <form action="/markAttend">
+        <table>
+            <tr>
+                <th>NO.</th>
+                <th>Employee Name.</th>
+                <th>Employee ID</th>
+                <th><input type="date" name="day_1"></th>
+                <th><input type="date" name="day_2"></th>
+                <th><input type="date" name="day_3"></th>
+                <th><input type="date" name="day_4"></th>
+            </tr>
+            <tr>
+                <td>{{ no }}</td>
+                <td>{{ name }}</td>
+                <td>{{ id }}</td>
+                <td><input type="checkbox" class="e1" name="e1_d1"></td>
+                <td><input type="checkbox" class="e1" name="e1_d2"></td>
+                <td><input type="checkbox" class="e1" name="e1_d3"></td>
+                <td><input type="checkbox" class="e1" name="e1_d4"></td>
+            </tr>
+        </table>
+    </form>
+        <button class="submitButton" type="submit">UPDATE DATABASE</button>
+</body>
+</html>
