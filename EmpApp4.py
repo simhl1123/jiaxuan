@@ -3,6 +3,7 @@ from pymysql import connections
 import os
 import boto3
 from config import *
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ def home():
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
     emp_id = request.form['emp_id']
-    first_name = request.form['first_name']
+    emp_name = request.form['emp_name']
     Payscale = request.form['Payscale']
     Department = request.form['Department']
     Hire_Date = request.form['Hire_Date']
@@ -115,30 +116,57 @@ def fetchInfo():
 @app.route("/deleteInfo", methods=['GET', 'POST'])
 def deleteInfo():
     mycursor = db_conn.cursor()
-
-    emp_id = ""
-    emp_name = ""
-    emp_payscale = ""
-    emp_department = ""
-    emp_hire_date = ""
     
-
     mycursor.execute("SELECT * FROM employees")
     myresult = mycursor.fetchall()
 
-    for row in myresult:
-        emp_id = row[0]
-        emp_name = row[1]
-        emp_payscale = row[2]
-        emp_department = row[3]
-        emp_hire_date = row[4]
 
-
-    return render_template('DeleteEmp.html', name=emp_name,id=emp_id)
+    return render_template('DeleteEmp.html', emplist=myresult)
 
 @app.route("/markAttend", methods=['GET', 'POST'])
 def markAttend():
-    return render_template('Attendence.html')
+    mycursor = db_conn.cursor()
+
+    
+    mycursor.execute("SELECT * FROM employees")
+    myresult = mycursor.fetchall()
+
+    
+    return render_template('Attendence.html',emplist=myresult)
+
+@app.route("/mark", methods=['GET', 'POST'])
+def mark():
+    mycursor = db_conn.cursor()
+    i = 0
+    emp_id=""
+    emp_name=""
+    emp_department=""
+    attendlist = request.form.getlist('attend')
+    now = datetime.now()
+    formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+
+    
+    mycursor.execute("SELECT * FROM employees")
+    
+    myresult = mycursor.fetchall()
+    
+    
+    insert_sql = "INSERT INTO attendence VALUES (%s, %s, %s, %s, %s)"  
+
+    for emplist in myresult:
+        emp_id = emplist[0]
+        emp_name = emplist[1]
+        emp_department = emplist[3]
+        emp_attend = attendlist[i]
+
+        mycursor.execute(insert_sql, (emp_id, emp_name, emp_department,emp_attend,formatted_date))
+        i=i+1
+    
+    db_conn.commit()
+
+    return render_template('AddEmp.html')
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
